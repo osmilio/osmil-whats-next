@@ -282,7 +282,10 @@ async function submitEmail(){
   if(!email||!email.includes('@')){errEl.style.display='block';return;}
   errEl.style.display='none';
   try{
-    await fetch('https://formspree.io/f/maqklydd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,headline:result.headline,answers})});
+    const formData=new FormData();
+    formData.append('email',email);
+    formData.append('message',result.headline);
+    await fetch('https://formspree.io/f/maqklydd',{method:'POST',body:formData,headers:{'Accept':'application/json'}});
   }catch(e){}
   document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
 }
