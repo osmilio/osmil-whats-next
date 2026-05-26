@@ -276,11 +276,14 @@ function showResult(){
   },100);
 }
 
-function submitEmail(){
+async function submitEmail(){
   const email=document.getElementById('email-input').value.trim();
   const errEl=document.getElementById('email-error');
   if(!email||!email.includes('@')){errEl.style.display='block';return;}
   errEl.style.display='none';
+  try{
+    await fetch('https://formspree.io/f/maqklydd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,headline:result.headline,answers})});
+  }catch(e){}
   document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
 }
 
