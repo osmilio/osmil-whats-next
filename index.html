@@ -285,6 +285,12 @@ async function submitEmail(){
     const formData=new FormData();
     formData.append('email',email);
     formData.append('message',result.headline);
+    formData.append('Trading',answers.trading);
+    formData.append('Brand origin',answers.brand_origin);
+    formData.append('New business',answers.new_biz);
+    formData.append('Website feeling',answers.friction);
+    formData.append('Upcoming',answers.upcoming);
+    formData.append('Brand feeling',answers.feeling);
     await fetch('https://formspree.io/f/maqklydd',{method:'POST',body:formData,headers:{'Accept':'application/json'}});
   }catch(e){}
   document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
