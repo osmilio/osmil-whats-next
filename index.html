@@ -100,7 +100,7 @@ function renderQuestion(){
   if(q.type==='options'){
     optionsHTML='<div class="options">'+q.opts.map(o=>`<button class="option${answers[q.id]===o?' selected':''}" data-val="${o}" onclick="selectOption('${q.id}',this)"><span class="dot"></span>${o}</button>`).join('')+'</div>';
   }else{
-    optionsHTML=`<textarea id="text-answer" placeholder="${q.placeholder}" oninput="answers['${q.id}']=this.value">${answers[q.id]||''}</textarea>`;
+    optionsHTML=`<textarea id="text-answer" placeholder="${q.placeholder}" oninput="answers['feeling']=this.value;document.getElementById('next-btn').disabled=!this.value.trim()">${answers[q.id]||''}</textarea>`;
   }
   body.innerHTML=`<div class="body"><div class="q-label">${q.label}</div><div class="question">${q.q}</div>${optionsHTML}<div class="nav"><button class="btn" onclick="goBack()" style="${current===0?'visibility:hidden':''}">← Back</button><span class="step-count">${current+1} / ${questions.length}</span><button class="btn btn-primary" id="next-btn" onclick="goNext()" ${!answers[q.id]?'disabled':''}>${current===questions.length-1?'Get my read →':'Next →'}</button></div></div>`;
 }
