@@ -47,7 +47,26 @@ textarea:focus{outline:none;border-color:#999}
 .next-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#999;margin-bottom:0.75rem}
 .step-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid #e8e6e0;font-size:13px;line-height:1.5;color:#1a1a1a}
 .step-num{font-size:11px;font-weight:500;color:#999;min-width:18px;padding-top:1px}
-.email-section{background:#fafaf8;border-radius:12px;padding:1.25rem 1.5rem;margin-top:1.5rem}
+.results-card{background:#1a1a1a;border-radius:12px;padding:1.75rem;margin:1.75rem 0;animation:fadeIn 0.6s ease}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.rc-logo{font-size:10px;font-weight:500;letter-spacing:0.12em;color:#666;text-transform:uppercase}
+.rc-badge{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#666;border:0.5px solid #333;border-radius:20px;padding:4px 10px}
+.rc-label{font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#555;margin-bottom:0.5rem}
+.rc-headline{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:#f5f5f0;line-height:1.25;margin-bottom:1.5rem}
+.rc-divider{height:0.5px;background:#2e2e2e;margin-bottom:1.5rem}
+.rc-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.rc-score{background:#242424;border-radius:8px;padding:12px}
+.rc-score-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.rc-bar-bg{height:2px;background:#2e2e2e;border-radius:2px;margin-bottom:8px}
+.rc-bar{height:2px;border-radius:2px;background:#f5f5f0;transition:width 1s ease}
+.rc-score-val{font-size:14px;font-weight:500;color:#f5f5f0}
+.rc-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.rc-pill{font-size:10px;color:#555;border:0.5px solid #2e2e2e;border-radius:20px;padding:4px 10px}
+.rc-pill.on{color:#aaa;border-color:#555}
+.rc-footer{display:flex;justify-content:space-between;align-items:center}
+.rc-footer-l{font-size:10px;color:#444;letter-spacing:0.06em}
+.rc-footer-r{font-size:10px;color:#444}
+.email-section{background:#fafaf8;border-radius:12px;padding:1.25rem 1.5rem;margin-top:0.5rem}
 .email-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;color:#1a1a1a;margin-bottom:0.4rem}
 .email-sub{font-size:12px;color:#888;margin-bottom:1rem;line-height:1.5}
 .email-row{display:flex;gap:8px}
@@ -76,11 +95,61 @@ const questions=[
   {id:'brand_origin',label:'Question 2 of 6',q:'How did your current brand come together?',type:'options',opts:['I did it myself','A freelancer helped me','A design agency did it',"I don't really have one yet"]},
   {id:'new_biz',label:'Question 3 of 6',q:'Where does most of your new business come from right now?',type:'options',opts:['Word of mouth and referrals','Social media','My website','Networking and events','A mix of all of these']},
   {id:'friction',label:'Question 4 of 6',q:'When someone asks "do you have a website I can look at?" — how do you feel?',type:'options',opts:['Proud — it does the job well','Fine, but it could be better','A little embarrassed honestly','I usually make an excuse']},
-  {id:'upcoming',label:'Question 5 of 6',q:"What's coming up in the next 6–12 months that makes brand feel more urgent?",type:'options',opts:['I want to attract bigger clients','I\'m raising money or pitching investors','I\'m hiring and need to look credible','I\'m launching something new','Nothing specific — I just know it\'s time']},
+  {id:'upcoming',label:'Question 5 of 6',q:"What's coming up in the next 6–12 months that makes brand feel more urgent?",type:'options',opts:["I want to attract bigger clients","I'm raising money or pitching investors","I'm hiring and need to look credible","I'm launching something new","Nothing specific — I just know it's time"]},
   {id:'feeling',label:'Question 6 of 6',q:'One word — how does your current brand make you feel?',type:'text',placeholder:'e.g. embarrassed, proud, invisible, confused, okay…'}
 ];
 
 let current=0,answers={},result=null;
+
+function snap5(n){return Math.round(n/5)*5;}
+
+function calcScores(){
+  let clarity=30,credibility=30,readiness=30;
+
+  if(answers.trading==='Less than a year'){clarity+=5;credibility+=0;readiness+=10;}
+  else if(answers.trading==='1–2 years'){clarity+=10;credibility+=10;readiness+=10;}
+  else if(answers.trading==='2–4 years'){clarity+=15;credibility+=15;readiness+=15;}
+  else if(answers.trading==='4+ years'){clarity+=20;credibility+=20;readiness+=20;}
+
+  if(answers.brand_origin==='I did it myself'){clarity-=10;credibility-=15;}
+  else if(answers.brand_origin==='A freelancer helped me'){clarity+=5;credibility+=0;}
+  else if(answers.brand_origin==='A design agency did it'){clarity+=15;credibility+=20;}
+  else if(answers.brand_origin==="I don't really have one yet"){clarity-=20;credibility-=20;}
+
+  if(answers.friction==='Proud — it does the job well'){credibility+=20;readiness+=15;}
+  else if(answers.friction==='Fine, but it could be better'){credibility+=5;readiness+=5;}
+  else if(answers.friction==='A little embarrassed honestly'){credibility-=10;readiness-=10;}
+  else if(answers.friction==='I usually make an excuse'){credibility-=20;readiness-=20;}
+
+  if(answers.upcoming==="I want to attract bigger clients"){readiness+=10;}
+  else if(answers.upcoming==="I'm raising money or pitching investors"){readiness+=15;}
+  else if(answers.upcoming==="I'm hiring and need to look credible"){readiness+=10;}
+  else if(answers.upcoming==="I'm launching something new"){readiness+=10;}
+  else if(answers.upcoming==="Nothing specific — I just know it's time"){readiness+=5;}
+
+  clarity=Math.min(95,Math.max(10,snap5(clarity)));
+  credibility=Math.min(95,Math.max(10,snap5(credibility)));
+  readiness=Math.min(95,Math.max(10,snap5(readiness)));
+
+  return{clarity,credibility,readiness};
+}
+
+function getPills(){
+  const pills=[];
+  if(answers.trading) pills.push(answers.trading+' trading');
+  if(answers.brand_origin==='I did it myself') pills.push('Self-built brand');
+  else if(answers.brand_origin==='A freelancer helped me') pills.push('Freelancer brand');
+  else if(answers.brand_origin==='A design agency did it') pills.push('Agency brand');
+  else if(answers.brand_origin==="I don't really have one yet") pills.push('No brand yet');
+  if(answers.new_biz==='Word of mouth and referrals') pills.push('Referral-led');
+  else if(answers.new_biz==='My website') pills.push('Website-led');
+  else if(answers.new_biz==='Social media') pills.push('Social-led');
+  if(answers.upcoming==="I'm raising money or pitching investors") pills.push('Pre-investment');
+  else if(answers.upcoming==="I'm hiring and need to look credible") pills.push('Pre-hire');
+  else if(answers.upcoming==="I'm launching something new") pills.push('Pre-launch');
+  else if(answers.upcoming==="I want to attract bigger clients") pills.push('Scaling up');
+  return pills;
+}
 
 function renderProgress(){
   const bar=document.getElementById('progress-bar');
@@ -139,7 +208,72 @@ async function callAPI(){
 
 function showResult(){
   renderProgress();
-  document.getElementById('tool-body').innerHTML=`<div class="result"><div class="result-label">Your brand read</div><div class="result-headline">${result.headline}</div><div class="result-body">${result.diagnosis}</div><div style="margin-bottom:1.75rem"><div class="next-label">What's next</div>${result.steps.map((s,i)=>`<div class="step-item"><span class="step-num">0${i+1}</span><span>${s}</span></div>`).join('')}</div><div class="email-section"><div class="email-title">Want to talk this through?</div><div class="email-sub">Leave your email and Oli will send you a personal note — no hard sell, just a proper conversation about what's next for your brand.</div><div class="email-row"><input type="email" class="email-input" id="email-input" placeholder="your@email.com"/><button class="btn btn-primary" onclick="submitEmail()">Send it →</button></div><div id="email-error" class="error" style="display:none">Please enter a valid email address.</div></div></div>`;
+  const scores=calcScores();
+  const pills=getPills();
+  const now=new Date();
+  const dateStr=now.toLocaleString('en-GB',{month:'long',year:'numeric'});
+
+  document.getElementById('tool-body').innerHTML=`
+    <div class="result">
+      <div class="result-label">Your brand read</div>
+      <div class="result-headline">${result.headline}</div>
+      <div class="result-body">${result.diagnosis}</div>
+
+      <div style="margin-bottom:1.75rem">
+        <div class="next-label">What's next</div>
+        ${result.steps.map((s,i)=>`<div class="step-item"><span class="step-num">0${i+1}</span><span>${s}</span></div>`).join('')}
+      </div>
+
+      <div class="results-card">
+        <div class="rc-top">
+          <div class="rc-logo">osmil™</div>
+          <div class="rc-badge">Results Card</div>
+        </div>
+        <div class="rc-label">Your diagnosis</div>
+        <div class="rc-headline">${result.headline}</div>
+        <div class="rc-divider"></div>
+        <div class="rc-scores">
+          <div class="rc-score">
+            <div class="rc-score-label">Clarity</div>
+            <div class="rc-bar-bg"><div class="rc-bar" id="bar-clarity" style="width:0%"></div></div>
+            <div class="rc-score-val">${scores.clarity}%</div>
+          </div>
+          <div class="rc-score">
+            <div class="rc-score-label">Credibility</div>
+            <div class="rc-bar-bg"><div class="rc-bar" id="bar-credibility" style="width:0%"></div></div>
+            <div class="rc-score-val">${scores.credibility}%</div>
+          </div>
+          <div class="rc-score">
+            <div class="rc-score-label">Readiness</div>
+            <div class="rc-bar-bg"><div class="rc-bar" id="bar-readiness" style="width:0%"></div></div>
+            <div class="rc-score-val">${scores.readiness}%</div>
+          </div>
+        </div>
+        <div class="rc-pills">
+          ${pills.map(p=>`<div class="rc-pill on">${p}</div>`).join('')}
+        </div>
+        <div class="rc-footer">
+          <div class="rc-footer-l">osmil.io — What's next?</div>
+          <div class="rc-footer-r">${dateStr}</div>
+        </div>
+      </div>
+
+      <div class="email-section">
+        <div class="email-title">Want to talk this through?</div>
+        <div class="email-sub">Leave your email and Oli will send you a personal note — no hard sell, just a proper conversation about what's next for your brand.</div>
+        <div class="email-row">
+          <input type="email" class="email-input" id="email-input" placeholder="your@email.com"/>
+          <button class="btn btn-primary" onclick="submitEmail()">Send it →</button>
+        </div>
+        <div id="email-error" class="error" style="display:none">Please enter a valid email address.</div>
+      </div>
+    </div>`;
+
+  setTimeout(()=>{
+    document.getElementById('bar-clarity').style.width=scores.clarity+'%';
+    document.getElementById('bar-credibility').style.width=scores.credibility+'%';
+    document.getElementById('bar-readiness').style.width=scores.readiness+'%';
+  },100);
 }
 
 function submitEmail(){
@@ -147,7 +281,8 @@ function submitEmail(){
   const errEl=document.getElementById('email-error');
   if(!email||!email.includes('@')){errEl.style.display='block';return;}
   errEl.style.display='none';
-document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
+  document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
+}
 
 renderQuestion();
 </script>
