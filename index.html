@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#fafaf8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+body{font-family:'DM Sans',sans-serif;background:#fafaf8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;font-size:120%}
 .card{background:#fff;border:0.5px solid #e8e6e0;border-radius:16px;width:100%;max-width:560px;overflow:hidden}
 .header{padding:2rem 2rem 1.5rem;border-bottom:0.5px solid #e8e6e0}
 .logo{font-size:11px;font-weight:500;letter-spacing:0.12em;color:#999;text-transform:uppercase;margin-bottom:1.25rem}
@@ -147,8 +147,7 @@ function submitEmail(){
   const errEl=document.getElementById('email-error');
   if(!email||!email.includes('@')){errEl.style.display='block';return;}
   errEl.style.display='none';
-  document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a personal note from <strong>oli@osmil.io</strong> soon.</div></div>';
-}
+document.getElementById('tool-body').innerHTML='<div class="submitted"><div class="submitted-headline">You\'re on Oli\'s radar.</div><div class="submitted-sub">Expect a straight-talking note soon. In the meantime, drop a line directly to <a href="mailto:design@olivermilburn.co.uk" style="color:#1a1a1a;font-weight:500;">design@olivermilburn.co.uk</a></div></div>';
 
 renderQuestion();
 </script>
